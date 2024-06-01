@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    height: 100vh;
+    margin: 0;
+}
+
+.dropdown-container {
+    text-align: center;
+}
+
+.dropdown-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.dropdown {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: all 0.3s ease;
+    appearance: none;
+    background: #fff url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMTVsLTYtNkg0bDYtNiA2IDZMMTggOXoiLz48L3N2Zz4=') no-repeat right 10px center;
+    background-size: 12px;
+}
+
+
+.dropdown:focus {
+    box-shadow: 0 0 5px rgba(85, 85, 85, 0.5);
+}
+.input-container {
+    text-align: center;
+}
+
+.input-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.styled-input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 300px;
+    box-sizing: border-box;
+}
+
+.styled-input:focus {
+    box-shadow: 0 0 5px rgba(85, 85, 85, 0.5);
+}
+
+.styled-input::placeholder {
+    color: #aaa;
+}
+button{
+    width: 80px;
+    border-radius: 5px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+button:hover{
+    cursor: pointer;
+}
+.box{
+    display: flex;
+
+}
+textarea{
+    width: 460px;
+    height: 300px;
+    resize: none;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+.box2{
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+.grid1{
+    
+    width: 50%;
+    padding-left: 150px;
+}
+.grid2{
+    border-left: 1px solid #ccc;
+    width: 50%;
+}
+.response-box{
+    width: 400px;
+    height: 400px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+    margin-left: 100px;
+}
+p{
+    margin-top: 100px;
+    margin-left: 100px;
+}
+.head{
+    display: flex;
+}
+.error{
+    display: flex;
+    justify-content: end;
+    width: 150px;
+    margin-left: 140px;
+    height: 20px;
+    margin-top: 100px;
+    color: red;
+}
+    </style>
+</head>
+<body>
+    <div class="grid1">
+        <div class="box">
+            <div class="dropdown-container">
+                <select id="http-methods" class="dropdown">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE"> DELETE</option>
+                </select>
+            </div>
+            <div class="input-container">
+                <input type="text" id="styled-input" class="styled-input">
+            </div>
+            <button>Send</button>
+        </div>
+        <div class="box2">
+            <label>JSON Content</label>
+        <textarea></textarea>
+        <div class="box2">
+            <label>Headers</label>
+        <textarea></textarea>
+    
+        </div>
+    </div>
+    </div>
+
+    <div class="grid2">
+        <div class="head">
+            <p>Response Box</p>
+            <div class="error"></div>
+        </div>
+      <div class="response-box"></div>
+    </div>
+
+</body>
+<script>
+    const button = document.getElementsByTagName("button")[0]
+    const dropBox = document.getElementById("http-methods")
+    const input = document.getElementById("styled-input")
+    const textarea = document.getElementsByTagName("textarea")[0]
+    const headers =  document.getElementsByTagName("textarea")[1]
+    const responseBox = document.querySelector(".response-box")
+    const errorMessage = document.querySelector(".error")
+
+
+
+    button.addEventListener('click',(e)=>{
+        const dropBoxValue = dropBox.value
+        const textAreaValue = textarea.value
+        const headersValue = headers.value
+        const url = input.value
+
+        
+        const options ={
+            method : dropBoxValue,
+           
+            
+        }
+        if(headers.value !== ""){
+            options.headers = JSON.parse(headers.value)
+        }
+
+        if(dropBox.value !== "GET"){
+            options.body = textAreaValue
+        }
+
+        fetch(url,options)
+        .then(response=>{
+           errorMessage.textContent = response.status
+          
+           if(response.status === 200|| response.status ===201||response.status ===202||response.status ===203){
+            errorMessage.style.color = "green"
+           }
+           else if(response.status === 404||response.status ===400||response.status ===401){
+            errorMessage.style.color = "red"
+           }
+          
+                return response.json()
+      
+        })
+        .then(data=>{
+            console.log(responseBox,data)
+            responseBox.textContent = JSON.stringify(data)
+        })
+
+    })
+</script>
+</html>
